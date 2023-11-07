@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-service
+          predicates:
+#            - Cookie=cookie, value
+#            - Header=myHeader, myValue
+#            - Method=GET,POST
+#            - Query=p, \d+
+            - name: Path
+              args:
+                regexp: /user-service/**
+          uri: lb://user-service
+
+        - id: order-service
+          predicates:
+            - name: Path
+              args:
+                regexp: /order-service/**
+          uri: lb://order-service
+
+        - id: book-service
+          predicates:
+            - name: Path
+              args:
+                regexp: /book-service/**
+          uri: lb://book-service
+
+        - id: publisher-service
+          predicates:
+            - name: Path
+              args:
+                regexp: /publisher-service/**
+          uri: lb://publisher-service
+
+#        - id: account-service
+#          predicates:
+#            - name: Path
+#              args:
+#                regexp: /account-service/**
+#          filters:
+#            - LocalResponseCache=30m,500MB
+#          uri: lb://account-service
+#      filter:
+#        local-response-cache:
+#          enabled: true
+
+
+
+
+
+server:
+  port: 8080
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+  instance:
+    preferIpAddress: true
